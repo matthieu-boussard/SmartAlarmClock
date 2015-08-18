@@ -29,7 +29,6 @@ def start():
 
 	request_Id = request.json['requestId']
 	output_json = json.dumps({"result": (inputParams['term1'] + inputParams['term2'])})
-	output_url = '{}/api/v1/{}/{}/{}/{}/actions/{}/output'.format(runtime.CRAFT_RUNTIME_SERVER_URL, sim_parameters['user'],sim_parameters['project'],sim_parameters['version'],sim_parameters['sim_id'], request_Id)
 	success_url = '{}/api/v1/{}/{}/{}/{}/actions/{}/success'.format(runtime.CRAFT_RUNTIME_SERVER_URL, sim_parameters['user'],sim_parameters['project'],sim_parameters['version'],sim_parameters['sim_id'], request_Id)
 	json_headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
 	r = requests.post(success_url, data=output_json, headers = json_headers)

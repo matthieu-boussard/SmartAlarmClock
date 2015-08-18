@@ -32,8 +32,7 @@ def start():
 	output_url = '{}/api/v1/{}/{}/{}/{}/actions/{}/output'.format(runtime.CRAFT_RUNTIME_SERVER_URL, sim_parameters['user'],sim_parameters['project'],sim_parameters['version'],sim_parameters['sim_id'], request_Id)
 	success_url = '{}/api/v1/{}/{}/{}/{}/actions/{}/success'.format(runtime.CRAFT_RUNTIME_SERVER_URL, sim_parameters['user'],sim_parameters['project'],sim_parameters['version'],sim_parameters['sim_id'], request_Id)
 	json_headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
-	r = requests.post(output_url, data=output_json, headers = json_headers)
-	r = requests.post(success_url)
+	r = requests.post(success_url, data=output_json, headers = json_headers)
 	return 
 
 def cancel():

@@ -37,7 +37,7 @@
 						},
 						"properties": {
 							"behavior": {
-								"value": "MainInitialization",
+								"value": "src/decision/MainInitialization.bt",
 								"type": "string"
 							},
 							"inputParams": []
@@ -84,7 +84,7 @@
 								},
 								"properties": {
 									"behavior": {
-										"value": "MainUpdate",
+										"value": "src/decision/MainUpdate.bt",
 										"type": "string"
 									},
 									"inputParams": []

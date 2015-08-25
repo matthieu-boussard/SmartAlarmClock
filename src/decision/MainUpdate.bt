@@ -459,7 +459,7 @@
                     },
                     "properties": {
                       "behavior": {
-                        "value": "AlertManager",
+                        "value": "src/decision/AlertManager.bt",
                         "type": "string"
                       },
                       "inputParams": []

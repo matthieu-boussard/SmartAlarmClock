@@ -185,7 +185,7 @@
 										},
 										"properties": {
 											"behavior": {
-												"value": "FormatMessage",
+												"value": "src/decision/FormatMessage.bt",
 												"type": "string"
 											},
 											"inputParams": []

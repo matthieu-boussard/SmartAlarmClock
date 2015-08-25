@@ -97,7 +97,7 @@
 								},
 								"properties": {
 									"behavior": {
-										"value": "GetGoogleCredentials",
+										"value": "src/decision/GetGoogleCredentials.bt",
 										"type": "string"
 									},
 									"inputParams": []
@@ -119,7 +119,7 @@
 								},
 								"properties": {
 									"behavior": {
-										"value": "InitGoogleServices",
+										"value": "src/decision/InitGoogleServices.bt",
 										"type": "string"
 									},
 									"inputParams": []

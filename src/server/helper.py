@@ -127,7 +127,7 @@ def run_simulation():
 		data['cred_google'] = stateVar.cred
 
 		# Create life entity
-		stateVar.entityId = runtime.create_entity(CRAFT_DEMO_SAC_USER, CRAFT_DEMO_SAC_PROJECT, CRAFT_DEMO_SAC_VERSION, simulation_id,'craft:ContextualAlerts.bt',  data)
+		stateVar.entityId = runtime.create_entity(CRAFT_DEMO_SAC_USER, CRAFT_DEMO_SAC_PROJECT, CRAFT_DEMO_SAC_VERSION, simulation_id,'src/decision/ContextualAlerts.bt',  data)
 		# Start update simulation in a thread
 		stateVar.t_simulation = UpdateLifeThreadClass()
 		stateVar.t_simulation.start()

@@ -1,36 +1,57 @@
-.background-body-sac {
-	display: block;
-	background-image: url('PhoneBG.png');
-	background-size: contain;
-	background-repeat: no-repeat;
-	height: 100%;
-	font-size: 18px;
-	background-position: 50% 50%;
-}
-
-.content-background {
-	margin-left: 44px;
-  	margin-top: 120px;
-}
-
 .form-content {
-	height: 40%;
+  position: relative;
+  display: table;
+  width: 100%;
 }
 
 .form-control.fit-to-background {
 	width: 65%;
-}
-
-.background-body-backoffice {
-	display: block;
-	background-color: #BCB5DA;
-	background-size: contain;
-	background-repeat: no-repeat;
-	height: 100%;
-	font-size: 18px;
-	background-position: 50% 50%;
+	display: inline-table;
 }
 
 .backoffice-background {
 	margin-left: 44px;
+}
+
+.row-fluid {
+  position: relative;
+}
+
+.phone-col {
+	height: 90%;
+	top: 5%;
+	/*background-image: url('PhoneBG.png');*/
+	background-size: contain;
+	font-size: 18px;
+  background-repeat: no-repeat;
+  background-position: 50% 50%;
+}
+
+.phone-col.left {	
+	background-color: #FAEBD7;
+}
+
+.phone-col.right {	
+	background-color: #BCB5DA;
+}
+
+.form-group {
+	display: inline-table;
+  width: 60%;
+}
+
+.inner-col {
+	height: 90%;
+  position: relative;
+  top: 5%;
+  display: table;
+  width: 100%;
+}
+
+.main-button {
+  display: table-footer-group;
+}
+
+.calendar {
+	width: 80%;
 }

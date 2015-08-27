@@ -25,7 +25,7 @@ RUNTIME_SERVER_REQUEST_PARAMS = {'scope': 'app'}
 def create_simulation(user, project, version):
 	print 'Creating Simulation...'
 	r = requests.put(CRAFT_RUNTIME_SERVER_URL + CRAFT_RUNTIME_SERVER_API_BASE_ROUTE + '/' + user + '/' + project + '/' + version, headers = HEADER_WITH_SECRETS, params = RUNTIME_SERVER_REQUEST_PARAMS)
-	return r.text
+	return json.loads(r.text)['instance']['instance_id']
 
 def delete_simulation(user, project, version, sim_id):
 	print 'Deleting Simulation...'
@@ -33,7 +33,7 @@ def delete_simulation(user, project, version, sim_id):
 
 def update_simulation(user, project, version, sim_id, time_t):
 	r = requests.post(CRAFT_RUNTIME_SERVER_URL + CRAFT_RUNTIME_SERVER_API_BASE_ROUTE + '/' + user + '/' + project + '/' + version + '/' + sim_id  + '/update', data='{"time":'+ str(time_t)+'}', headers = HEADER_WITH_SECRETS, params = RUNTIME_SERVER_REQUEST_PARAMS)
-	return r.text
+	return json.loads(r.text)['message']
 
 def create_entity(user, project, version, sim_id, behavior, knowledgeJson=None ):
 	url = CRAFT_RUNTIME_SERVER_URL + CRAFT_RUNTIME_SERVER_API_BASE_ROUTE + '/' + user + '/' + project + '/' + version + '/' + sim_id + '/entities'
@@ -45,16 +45,17 @@ def create_entity(user, project, version, sim_id, behavior, knowledgeJson=None )
 
 	r = requests.put(url, data=json_data, headers = HEADER_WITH_SECRETS, params = RUNTIME_SERVER_REQUEST_PARAMS)
 
-	print 'Entity id', r.text
+	entity_id = json.loads(r.text)['entity']['id']
+	print 'Entity id', entity_id
 
-	return int(r.text)
+	return entity_id
 
 def delete_entity(user, project, version, sim_id, id):
 	r = requests.delete(CRAFT_RUNTIME_SERVER_URL + CRAFT_RUNTIME_SERVER_API_BASE_ROUTE + '/' + user + '/' + project + '/' + version + '/' + sim_id +'/entities/' + str(id), headers = HEADER_WITH_SECRETS, params = RUNTIME_SERVER_REQUEST_PARAMS)
 
 def getEntityKnowledge(user, project, version, sim_id, id):
 	r = requests.get(CRAFT_RUNTIME_SERVER_URL + CRAFT_RUNTIME_SERVER_API_BASE_ROUTE + '/' + user + '/' + project + '/' + version + '/' + sim_id + '/entities/'+ str(id) + '/knowledge', headers = HEADER_WITH_SECRETS, params = RUNTIME_SERVER_REQUEST_PARAMS)
-	return r.text
+	return json.loads(r.text)['knowledge']
 
 def putEntityKnowledge(user, project, version, sim_id, id, val):
 	r = requests.post(CRAFT_RUNTIME_SERVER_URL + CRAFT_RUNTIME_SERVER_API_BASE_ROUTE + '/' + user + '/' + project + '/' + version + '/' + sim_id + '/entities/'+ str(id) + '/knowledge', data=json.dumps(val), headers = HEADER_WITH_SECRETS, params = RUNTIME_SERVER_REQUEST_PARAMS)
@@ -70,7 +71,7 @@ def register_webActions(user, project, version, sim_id, actionName, requestName)
 
 def getGlobalKnowledge(user, project, version, sim_id):
 	r = requests.get(CRAFT_RUNTIME_SERVER_URL + CRAFT_RUNTIME_SERVER_API_BASE_ROUTE + '/' + user + '/' + project + '/' + version + '/' + sim_id +'/globalKnowledge', headers = HEADER_WITH_SECRETS, params = RUNTIME_SERVER_REQUEST_PARAMS)
-	return r.text
+	return json.loads(r.text)['knowledge']
 
 def setGlobalKnowledge(user, project, version, sim_id, val):
 	r = requests.post(CRAFT_RUNTIME_SERVER_URL + CRAFT_RUNTIME_SERVER_API_BASE_ROUTE + '/' + user + '/' + project + '/' + version + '/' + sim_id +'/globalKnowledge', data=json.dumps(val), headers = HEADER_WITH_SECRETS, params = RUNTIME_SERVER_REQUEST_PARAMS)

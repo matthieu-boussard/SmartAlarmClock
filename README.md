@@ -1,6 +1,6 @@
-# Smart Alarm Clock - **craft ai** getting started app #
+# Smart Alarm Clock - **craft ai** app #
 
-Welcome to the **Smart Alarm Clock** (**SAC** for short) [**craft ai**](http://craft.ai) _getting started_ application.
+Welcome to the **Smart Alarm Clock** (**SAC** for short) [**craft ai**](http://craft.ai) application.
 
 ## Requirements ##
 1. Install [Python 2.7](https://www.python.org) on your computer,

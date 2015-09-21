@@ -6,7 +6,7 @@ import os
 import socket
 import Queue
 
-mainEntityId = -1
+mainAgentId = -1
 eventQueue = Queue.Queue()
 
 status = {'created': 0, 'failed': 1, 'running': 2, 'succeeded': 3, 'canceled': 4, 'canceling': 5, 'destroyed': 6}
@@ -20,58 +20,58 @@ SAC_APP_SECRET = os.getenv('CRAFT_DEMO_SAC_APP_SECRET', '')
 SAC_APP_ID     = os.getenv('CRAFT_DEMO_SAC_APP_ID', '')
 
 HEADER_WITH_SECRETS = {'X-Craft-Ai-App-Id': SAC_APP_ID, 'X-Craft-Ai-App-Secret': SAC_APP_SECRET, 'Content-type': 'application/json', 'Accept': 'text/plain'}
-RUNTIME_SERVER_REQUEST_PARAMS = {'scope': 'app'}
 
-def create_simulation(user, project, version):
-	print 'Creating Simulation...'
-	r = requests.put(CRAFT_RUNTIME_SERVER_URL + CRAFT_RUNTIME_SERVER_API_BASE_ROUTE + '/' + user + '/' + project + '/' + version, headers = HEADER_WITH_SECRETS, params = RUNTIME_SERVER_REQUEST_PARAMS)
-	return json.loads(r.text)['instance']['instance_id']
+def create_instance(user, project, version):
+	print 'Creating instance...'
+	r = requests.put(CRAFT_RUNTIME_SERVER_URL + CRAFT_RUNTIME_SERVER_API_BASE_ROUTE + '/' + user + '/' + project + '/' + version, headers = HEADER_WITH_SECRETS)
+	return r.json()['instance']['instance_id']
 
-def delete_simulation(user, project, version, sim_id):
-	print 'Deleting Simulation...'
-	r = requests.delete(CRAFT_RUNTIME_SERVER_URL + CRAFT_RUNTIME_SERVER_API_BASE_ROUTE + '/' + user + '/' + project + '/' + version + '/' + sim_id )
+def delete_instance(user, project, version, instance_id):
+	print 'Deleting instance...'
+	r = requests.delete(CRAFT_RUNTIME_SERVER_URL + CRAFT_RUNTIME_SERVER_API_BASE_ROUTE + '/' + user + '/' + project + '/' + version + '/' + instance_id, headers = HEADER_WITH_SECRETS)
+	print r.json()['message']
 
-def update_simulation(user, project, version, sim_id, time_t):
-	r = requests.post(CRAFT_RUNTIME_SERVER_URL + CRAFT_RUNTIME_SERVER_API_BASE_ROUTE + '/' + user + '/' + project + '/' + version + '/' + sim_id  + '/update', data='{"time":'+ str(time_t)+'}', headers = HEADER_WITH_SECRETS, params = RUNTIME_SERVER_REQUEST_PARAMS)
+def update_instance(user, project, version, instance_id, time_t):
+	r = requests.post(CRAFT_RUNTIME_SERVER_URL + CRAFT_RUNTIME_SERVER_API_BASE_ROUTE + '/' + user + '/' + project + '/' + version + '/' + instance_id  + '/update', data='{"time":'+ str(time_t)+'}', headers = HEADER_WITH_SECRETS)
 	return json.loads(r.text)['message']
 
-def create_entity(user, project, version, sim_id, behavior, knowledgeJson=None ):
-	url = CRAFT_RUNTIME_SERVER_URL + CRAFT_RUNTIME_SERVER_API_BASE_ROUTE + '/' + user + '/' + project + '/' + version + '/' + sim_id + '/entities'
+def create_agent(user, project, version, instance_id, behavior, knowledgeJson = None ):
+	url = CRAFT_RUNTIME_SERVER_URL + CRAFT_RUNTIME_SERVER_API_BASE_ROUTE + '/' + user + '/' + project + '/' + version + '/' + instance_id + '/agents'
 	
 	if not knowledgeJson :
 		knowledgeJson = json.loads('{}')
 
-	json_data = '{"behavior" : "' + behavior +'", "knowledge":' + json.dumps(knowledgeJson) + '}'
+	json_data = '{"behavior": "' + behavior +'", "knowledge":' + json.dumps(knowledgeJson) + '}'
 
-	r = requests.put(url, data=json_data, headers = HEADER_WITH_SECRETS, params = RUNTIME_SERVER_REQUEST_PARAMS)
+	r = requests.put(url, data=json_data, headers = HEADER_WITH_SECRETS)
 
-	entity_id = json.loads(r.text)['entity']['id']
-	print 'Entity id', entity_id
+	agent_id = r.json()['agent']['id']
+	print 'Agent id', agent_id
 
-	return entity_id
+	return agent_id
 
-def delete_entity(user, project, version, sim_id, id):
-	r = requests.delete(CRAFT_RUNTIME_SERVER_URL + CRAFT_RUNTIME_SERVER_API_BASE_ROUTE + '/' + user + '/' + project + '/' + version + '/' + sim_id +'/entities/' + str(id), headers = HEADER_WITH_SECRETS, params = RUNTIME_SERVER_REQUEST_PARAMS)
+def delete_agent(user, project, version, instance_id, id):
+	r = requests.delete(CRAFT_RUNTIME_SERVER_URL + CRAFT_RUNTIME_SERVER_API_BASE_ROUTE + '/' + user + '/' + project + '/' + version + '/' + instance_id +'/agents/' + str(id), headers = HEADER_WITH_SECRETS)
 
-def getEntityKnowledge(user, project, version, sim_id, id):
-	r = requests.get(CRAFT_RUNTIME_SERVER_URL + CRAFT_RUNTIME_SERVER_API_BASE_ROUTE + '/' + user + '/' + project + '/' + version + '/' + sim_id + '/entities/'+ str(id) + '/knowledge', headers = HEADER_WITH_SECRETS, params = RUNTIME_SERVER_REQUEST_PARAMS)
-	return json.loads(r.text)['knowledge']
+def getAgentKnowledge(user, project, version, instance_id, id):
+	r = requests.get(CRAFT_RUNTIME_SERVER_URL + CRAFT_RUNTIME_SERVER_API_BASE_ROUTE + '/' + user + '/' + project + '/' + version + '/' + instance_id + '/agents/'+ str(id) + '/knowledge', headers = HEADER_WITH_SECRETS)
+	return r.json()['knowledge']
 
-def putEntityKnowledge(user, project, version, sim_id, id, val):
-	r = requests.post(CRAFT_RUNTIME_SERVER_URL + CRAFT_RUNTIME_SERVER_API_BASE_ROUTE + '/' + user + '/' + project + '/' + version + '/' + sim_id + '/entities/'+ str(id) + '/knowledge', data=json.dumps(val), headers = HEADER_WITH_SECRETS, params = RUNTIME_SERVER_REQUEST_PARAMS)
+def putAgentKnowledge(user, project, version, instance_id, id, val, method = ''):
+	r = requests.post(CRAFT_RUNTIME_SERVER_URL + CRAFT_RUNTIME_SERVER_API_BASE_ROUTE + '/' + user + '/' + project + '/' + version + '/' + instance_id + '/agents/'+ str(id) + '/knowledge', data=json.dumps(val), headers = HEADER_WITH_SECRETS, params =  {'method': method})
 
-def register_webActions(user, project, version, sim_id, actionName, requestName):
+def register_webActions(user, project, version, instance_id, actionName, requestName):
 	print 'Registering web actions', actionName
 
 	req = json.dumps({
 		'name': actionName,
 		'url': CRAFT_DEMO_SAC_ACTIONS_URL + requestName
 	})
-	r = requests.put(CRAFT_RUNTIME_SERVER_URL + CRAFT_RUNTIME_SERVER_API_BASE_ROUTE + '/' + user + '/' + project + '/' + version + '/' + sim_id + '/actions', data=req, headers = HEADER_WITH_SECRETS, params = RUNTIME_SERVER_REQUEST_PARAMS)
+	r = requests.put(CRAFT_RUNTIME_SERVER_URL + CRAFT_RUNTIME_SERVER_API_BASE_ROUTE + '/' + user + '/' + project + '/' + version + '/' + instance_id + '/actions', data=req, headers = HEADER_WITH_SECRETS)
 
-def getGlobalKnowledge(user, project, version, sim_id):
-	r = requests.get(CRAFT_RUNTIME_SERVER_URL + CRAFT_RUNTIME_SERVER_API_BASE_ROUTE + '/' + user + '/' + project + '/' + version + '/' + sim_id +'/globalKnowledge', headers = HEADER_WITH_SECRETS, params = RUNTIME_SERVER_REQUEST_PARAMS)
-	return json.loads(r.text)['knowledge']
+def getInstanceKnowledge(user, project, version, instance_id):
+	r = requests.get(CRAFT_RUNTIME_SERVER_URL + CRAFT_RUNTIME_SERVER_API_BASE_ROUTE + '/' + user + '/' + project + '/' + version + '/' + instance_id +'/globalKnowledge', headers = HEADER_WITH_SECRETS)
+	return r.json()['knowledge']
 
-def setGlobalKnowledge(user, project, version, sim_id, val):
-	r = requests.post(CRAFT_RUNTIME_SERVER_URL + CRAFT_RUNTIME_SERVER_API_BASE_ROUTE + '/' + user + '/' + project + '/' + version + '/' + sim_id +'/globalKnowledge', data=json.dumps(val), headers = HEADER_WITH_SECRETS, params = RUNTIME_SERVER_REQUEST_PARAMS)
+def setInstanceKnowledge(user, project, version, instance_id, val, method = ''):
+	r = requests.post(CRAFT_RUNTIME_SERVER_URL + CRAFT_RUNTIME_SERVER_API_BASE_ROUTE + '/' + user + '/' + project + '/' + version + '/' + instance_id +'/globalKnowledge', data=json.dumps(val), headers = HEADER_WITH_SECRETS, params =  {'method': method})

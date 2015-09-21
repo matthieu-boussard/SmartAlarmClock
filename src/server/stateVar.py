@@ -1,8 +1,8 @@
 speedFactor = 0 #For demonstration purposes
 currentTime = 0.0 #For demonstration purposes
 
-t_simulation = None
-entityId = -1
+t_instance = None
+agentId = -1
 
 authenticated = False
 cred = None

@@ -39,8 +39,8 @@ CRAFT_DEMO_SAC_USER    = os.getenv('CRAFT_DEMO_SAC_USER', '')
 CRAFT_DEMO_SAC_PROJECT = os.getenv('CRAFT_DEMO_SAC_PROJECT', '')
 CRAFT_DEMO_SAC_VERSION = os.getenv('CRAFT_DEMO_SAC_VERSION','')
 
-simulation_step = 0.1
-simulation_id = -1
+instance_step = 0.1
+instance_id = -1
 localTz = 'UTC'
 
 working_dir = os.path.abspath(os.path.dirname(os.path.realpath(__file__)))
@@ -100,37 +100,42 @@ def handle_websocket():
 		print '%s: %s' % (ex.__class__.__name__, ex)
 		ws.close();
 
-@app.route('/stop')
-def stop_simulation():
+@app.route('/stop', method=['GET', 'POST'])
+def stop_instance():
 	with runtime.eventQueue.mutex:
 		runtime.eventQueue.queue.clear()
-	if not(stateVar.t_simulation is None):
-	    stateVar.t_simulation.event.set()
-	    stateVar.t_simulation.join()
-	    stateVar.t_simulation = None
-	return template(os.path.join(working_dir, 'html/index.html'), auth = stateVar.authenticated, sim = stateVar.t_simulation)
+	if not(stateVar.t_instance is None):
+	    stateVar.t_instance.event.set()
+	    stateVar.t_instance.join()
+	    stateVar.t_instance = None
+	return template(os.path.join(working_dir, 'html/index.html'), auth = stateVar.authenticated, instance = stateVar.t_instance)
 
 @app.route('/run', method=['GET', 'POST'])
-def run_simulation():
-	if stateVar.t_simulation is None:
+def run_instance():
+	if stateVar.t_instance is None:
 		stateVar.currentTime = time.time()
-		# Create life simulation    
-		global simulation_id
-		simulation_id = runtime.create_simulation(CRAFT_DEMO_SAC_USER, CRAFT_DEMO_SAC_PROJECT, CRAFT_DEMO_SAC_VERSION)
+		# Create life instance    
+		global instance_id
+		instance_id = runtime.create_instance(CRAFT_DEMO_SAC_USER, CRAFT_DEMO_SAC_PROJECT, CRAFT_DEMO_SAC_VERSION)
+
+		# Init instance knowledge
+		runtime.setInstanceKnowledge(CRAFT_DEMO_SAC_USER, CRAFT_DEMO_SAC_PROJECT, CRAFT_DEMO_SAC_VERSION, instance_id, {'tz':localTz})
+		runtime.setInstanceKnowledge(CRAFT_DEMO_SAC_USER, CRAFT_DEMO_SAC_PROJECT, CRAFT_DEMO_SAC_VERSION, instance_id, {'time':stateVar.currentTime}, 'merge')
 
 		# Register webActions
 		get_and_register_webActions()
 
+		# Start update instance in a thread
+		stateVar.t_instance = UpdateLifeThreadClass()
+		stateVar.t_instance.start()
+		
+		# Create life agent
 		with open(os.path.join(working_dir, '../knowledge/ContextualAlerts.json')) as data_file:
 			data = json.load(data_file)
-
+		
 		data['cred_google'] = stateVar.cred
 
-		# Create life entity
-		stateVar.entityId = runtime.create_entity(CRAFT_DEMO_SAC_USER, CRAFT_DEMO_SAC_PROJECT, CRAFT_DEMO_SAC_VERSION, simulation_id,'src/decision/ContextualAlerts.bt',  data)
-		# Start update simulation in a thread
-		stateVar.t_simulation = UpdateLifeThreadClass()
-		stateVar.t_simulation.start()
+		stateVar.agentId = runtime.create_agent(CRAFT_DEMO_SAC_USER, CRAFT_DEMO_SAC_PROJECT, CRAFT_DEMO_SAC_VERSION, instance_id,'src/decision/ContextualAlerts.bt', data)
 	return update_data()
 
 def update_data():
@@ -140,32 +145,32 @@ def update_data():
 		val = request.json['value']
 		if param == "snooze":
 			if val == "You have to wake up, you have a metting.":
-				runtime.putEntityKnowledge(CRAFT_DEMO_SAC_USER, CRAFT_DEMO_SAC_PROJECT, CRAFT_DEMO_SAC_VERSION, simulation_id, stateVar.entityId, {'alert':{'snooze':{'0':True, '1':False}}})
+				runtime.putAgentKnowledge(CRAFT_DEMO_SAC_USER, CRAFT_DEMO_SAC_PROJECT, CRAFT_DEMO_SAC_VERSION, instance_id, stateVar.agentId, {'alert':{'snooze':{'0':True, '1':False}}}, 'merge')
 			elif val == "It's time to go.":
-				runtime.putEntityKnowledge(CRAFT_DEMO_SAC_USER, CRAFT_DEMO_SAC_PROJECT, CRAFT_DEMO_SAC_VERSION, simulation_id, stateVar.entityId, {'alert':{'snooze':{'0':False, '1':True}}})
+				runtime.putAgentKnowledge(CRAFT_DEMO_SAC_USER, CRAFT_DEMO_SAC_PROJECT, CRAFT_DEMO_SAC_VERSION, instance_id, stateVar.agentId, {'alert':{'snooze':{'0':False, '1':True}}}, 'merge')
 		elif param == "time":
 			stateVar.currentTime = stateVar.currentTime + int(val)*60
 		elif param == "transpMode":
-			runtime.putEntityKnowledge(CRAFT_DEMO_SAC_USER, CRAFT_DEMO_SAC_PROJECT, CRAFT_DEMO_SAC_VERSION, simulation_id, stateVar.entityId, {'transportationMode':val})
-			runtime.putEntityKnowledge(CRAFT_DEMO_SAC_USER, CRAFT_DEMO_SAC_PROJECT, CRAFT_DEMO_SAC_VERSION, simulation_id, stateVar.entityId, {'directions':{'found':False}})
+			runtime.putAgentKnowledge(CRAFT_DEMO_SAC_USER, CRAFT_DEMO_SAC_PROJECT, CRAFT_DEMO_SAC_VERSION, instance_id, stateVar.agentId, {'transportationMode':val}, 'merge')
+			runtime.putAgentKnowledge(CRAFT_DEMO_SAC_USER, CRAFT_DEMO_SAC_PROJECT, CRAFT_DEMO_SAC_VERSION, instance_id, stateVar.agentId, {'directions':{'found':False}}, 'merge')
 		elif param == "location":
 			location = str(val["latitude"]) + "," + str(val["longitude"])
-			runtime.putEntityKnowledge(CRAFT_DEMO_SAC_USER, CRAFT_DEMO_SAC_PROJECT, CRAFT_DEMO_SAC_VERSION, simulation_id, stateVar.entityId, {'origin':location})
+			runtime.putAgentKnowledge(CRAFT_DEMO_SAC_USER, CRAFT_DEMO_SAC_PROJECT, CRAFT_DEMO_SAC_VERSION, instance_id, stateVar.agentId, {'origin':location}, 'merge')
 		elif param == "origin":
-			runtime.putEntityKnowledge(CRAFT_DEMO_SAC_USER, CRAFT_DEMO_SAC_PROJECT, CRAFT_DEMO_SAC_VERSION, simulation_id, stateVar.entityId, {'origin':val})
-			runtime.putEntityKnowledge(CRAFT_DEMO_SAC_USER, CRAFT_DEMO_SAC_PROJECT, CRAFT_DEMO_SAC_VERSION, simulation_id, stateVar.entityId, {'directions':{'found':False}})
+			runtime.putAgentKnowledge(CRAFT_DEMO_SAC_USER, CRAFT_DEMO_SAC_PROJECT, CRAFT_DEMO_SAC_VERSION, instance_id, stateVar.agentId, {'origin':val}, 'merge')
+			runtime.putAgentKnowledge(CRAFT_DEMO_SAC_USER, CRAFT_DEMO_SAC_PROJECT, CRAFT_DEMO_SAC_VERSION, instance_id, stateVar.agentId, {'directions':{'found':False}}, 'merge')
 		elif param == "presence":
-			runtime.putEntityKnowledge(CRAFT_DEMO_SAC_USER, CRAFT_DEMO_SAC_PROJECT, CRAFT_DEMO_SAC_VERSION, simulation_id, stateVar.entityId, {'left': not val})
+			runtime.putAgentKnowledge(CRAFT_DEMO_SAC_USER, CRAFT_DEMO_SAC_PROJECT, CRAFT_DEMO_SAC_VERSION, instance_id, stateVar.agentId, {'left': not val}, 'merge')
 		elif param == "awake":
-			runtime.putEntityKnowledge(CRAFT_DEMO_SAC_USER, CRAFT_DEMO_SAC_PROJECT, CRAFT_DEMO_SAC_VERSION, simulation_id, stateVar.entityId, {'awake': not val})
+			runtime.putAgentKnowledge(CRAFT_DEMO_SAC_USER, CRAFT_DEMO_SAC_PROJECT, CRAFT_DEMO_SAC_VERSION, instance_id, stateVar.agentId, {'awake': not val}, 'merge')
 		elif param == "workLocation":
-			runtime.putEntityKnowledge(CRAFT_DEMO_SAC_USER, CRAFT_DEMO_SAC_PROJECT, CRAFT_DEMO_SAC_VERSION, simulation_id, stateVar.entityId, {'workLocation':val})
-			runtime.putEntityKnowledge(CRAFT_DEMO_SAC_USER, CRAFT_DEMO_SAC_PROJECT, CRAFT_DEMO_SAC_VERSION, simulation_id, stateVar.entityId, {'directions':{'found':False}})
+			runtime.putAgentKnowledge(CRAFT_DEMO_SAC_USER, CRAFT_DEMO_SAC_PROJECT, CRAFT_DEMO_SAC_VERSION, instance_id, stateVar.agentId, {'workLocation':val}, 'merge')
+			runtime.putAgentKnowledge(CRAFT_DEMO_SAC_USER, CRAFT_DEMO_SAC_PROJECT, CRAFT_DEMO_SAC_VERSION, instance_id, stateVar.agentId, {'directions':{'found':False}}, 'merge')
 		elif param == "speed":
 			stateVar.speedFactor = int(val)
 	return template(os.path.join(working_dir, 'html/index.html'),
 		auth = stateVar.authenticated,
-		sim = stateVar.t_simulation,
+		instance = stateVar.t_instance,
 		email = stateVar.cred['id_token']['email'],
 		url = URL,
 		wsUrl = WS_URL)
@@ -189,7 +194,7 @@ def get_and_register_webActions():
 	for file in glob.glob(actionsdir + '/*.py'):
 		name = os.path.splitext(os.path.basename(file))[0]
 		module = imp.load_source(name, actionsdir +'/' + name + '.py')
-		module.registerAction(CRAFT_DEMO_SAC_USER, CRAFT_DEMO_SAC_PROJECT, CRAFT_DEMO_SAC_VERSION, simulation_id)
+		module.registerAction(CRAFT_DEMO_SAC_USER, CRAFT_DEMO_SAC_PROJECT, CRAFT_DEMO_SAC_VERSION, instance_id)
 		register_routes_webActions(app, name, module.start, module.cancel)
 		print '- Registering web actions: ' + name
 
@@ -200,24 +205,20 @@ class UpdateLifeThreadClass(gevent.Greenlet):
 		self.event = gevent.event.Event()
 	def _run(self):
 		previousTickTime = stateVar.currentTime
-		once = True
 		while not self.event.isSet():
 			try:
-				success = runtime.update_simulation(CRAFT_DEMO_SAC_USER, CRAFT_DEMO_SAC_PROJECT, CRAFT_DEMO_SAC_VERSION, simulation_id, simulation_step)
+				success = runtime.update_instance(CRAFT_DEMO_SAC_USER, CRAFT_DEMO_SAC_PROJECT, CRAFT_DEMO_SAC_VERSION, instance_id, instance_step)
 			except OSError, e:
 				print e
-				runtime.delete_simulation(CRAFT_DEMO_SAC_USER, CRAFT_DEMO_SAC_PROJECT, CRAFT_DEMO_SAC_VERSION, simulation_id)
+				runtime.delete_instance(CRAFT_DEMO_SAC_USER, CRAFT_DEMO_SAC_PROJECT, CRAFT_DEMO_SAC_VERSION, instance_id)
 
-			gevent.sleep(simulation_step)
+			gevent.sleep(instance_step)
 			currentTickTime = time.time()
 			stateVar.currentTime = stateVar.currentTime+stateVar.speedFactor*(currentTickTime-previousTickTime)
 			previousTickTime = currentTickTime
-			if once:
-				runtime.setGlobalKnowledge(CRAFT_DEMO_SAC_USER, CRAFT_DEMO_SAC_PROJECT, CRAFT_DEMO_SAC_VERSION, simulation_id, {'tz':localTz})
-				once = False
-			runtime.setGlobalKnowledge(CRAFT_DEMO_SAC_USER, CRAFT_DEMO_SAC_PROJECT, CRAFT_DEMO_SAC_VERSION, simulation_id, {'time':stateVar.currentTime})
+			runtime.setInstanceKnowledge(CRAFT_DEMO_SAC_USER, CRAFT_DEMO_SAC_PROJECT, CRAFT_DEMO_SAC_VERSION, instance_id, {'time':stateVar.currentTime}, 'merge')
 
-		runtime.delete_simulation(CRAFT_DEMO_SAC_USER, CRAFT_DEMO_SAC_PROJECT, CRAFT_DEMO_SAC_VERSION, simulation_id)
+		runtime.delete_instance(CRAFT_DEMO_SAC_USER, CRAFT_DEMO_SAC_PROJECT, CRAFT_DEMO_SAC_VERSION, instance_id)
 
 	def __str__(self):
 		return 'UpdateLifeThreadClass'

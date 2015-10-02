@@ -4,7 +4,7 @@ Welcome to the **Smart Alarm Clock** (**SAC** for short) [**craft ai**](http://c
 
 ## What is it ? ##
 
-**SAC** is a small demo application we built with [**craft ai**](http://craft.ai).
+**SAC** is a small demo application built with [**craft ai**](http://craft.ai).
 It demonstrates an application that will take care of managing your time based on your meetings on your google calendar.
 It will alert you when you should leave to your next meeting and will give you instruction on time to not miss it, based on realtime traffic informations.
 

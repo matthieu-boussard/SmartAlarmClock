@@ -3,6 +3,3 @@ currentTime = 0.0 #For demonstration purposes
 
 t_instance = None
 agentId = -1
-
-authenticated = False
-cred = None

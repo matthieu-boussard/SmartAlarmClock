@@ -70,7 +70,7 @@
                               "itemTemplate": "BTActionNode.qml"
                             },
                             "properties": {
-                              "name": "GetNextEvent",
+                              "name": "google/calendar/GetNextEvent",
                               "inputParams": [
                                 {
                                   "key": "calendarId",
@@ -78,7 +78,7 @@
                                   "value": "primary"
                                 },
                                 {
-                                  "key": "startingTime",
+                                  "key": "dateTime",
                                   "type": "globalKnowledge",
                                   "value": "time"
                                 },
@@ -86,6 +86,11 @@
                                   "key": "timeZone",
                                   "type": "globalKnowledge",
                                   "value": "tz"
+                                },
+                                {
+                                  "key": "userId",
+                                  "type": "entityKnowledge",
+                                  "value": "google_userId"
                                 }
                               ],
                               "outputParams": [
@@ -195,44 +200,65 @@
                                       {
                                         "activated": true,
                                         "metadata": {
-                                          "label": "",
-                                          "itemTemplate": "BTActionNode.qml"
+                                          "label": ""
                                         },
-                                        "properties": {
-                                          "name": "UpdateEvent",
-                                          "inputParams": [
-                                            {
-                                              "key": "calendarId",
-                                              "type": "string",
-                                              "value": "primary"
+                                        "properties": {},
+                                        "children": [
+                                          {
+                                            "activated": true,
+                                            "metadata": {
+                                              "label": "",
+                                              "itemTemplate": "BTActionNode.qml"
                                             },
-                                            {
-                                              "key": "eventId",
-                                              "type": "entityKnowledge",
-                                              "value": "resultEvent.id"
+                                            "properties": {
+                                              "name": "google/calendar/UpdateEvent",
+                                              "inputParams": [
+                                                {
+                                                  "key": "calendarId",
+                                                  "type": "string",
+                                                  "value": "primary"
+                                                },
+                                                {
+                                                  "key": "eventId",
+                                                  "type": "entityKnowledge",
+                                                  "value": "resultEvent.id"
+                                                },
+                                                {
+                                                  "key": "properties.location",
+                                                  "type": "entityKnowledge",
+                                                  "value": "workLocation"
+                                                },
+                                                {
+                                                  "key": "userId",
+                                                  "type": "entityKnowledge",
+                                                  "value": "google_userId"
+                                                }
+                                              ],
+                                              "outputParams": []
                                             },
-                                            {
-                                              "key": "property",
-                                              "type": "string",
-                                              "value": "location"
+                                            "children": [],
+                                            "id": "ff045a71-bf0e-4322-b24b-1ddc81fc0fd7",
+                                            "type": "action"
+                                          },
+                                          {
+                                            "activated": true,
+                                            "metadata": {
+                                              "label": ""
                                             },
-                                            {
-                                              "key": "value",
-                                              "type": "entityKnowledge",
-                                              "value": "workLocation"
-                                            }
-                                          ],
-                                          "outputParams": [
-                                            {
-                                              "key": "destination",
-                                              "type": "entityKnowledge",
-                                              "value": "resultEvent.location"
-                                            }
-                                          ]
-                                        },
-                                        "children": [],
-                                        "id": "ff045a71-bf0e-4322-b24b-1ddc81fc0fd7",
-                                        "type": "action"
+                                            "properties": {
+                                              "destination": "resultEvent.location",
+                                              "op": {
+                                                "type": "entityKnowledge",
+                                                "value": "workLocation"
+                                              }
+                                            },
+                                            "children": [],
+                                            "id": "ef0b20cb-e5f9-428c-a283-c2230f4e10b7",
+                                            "type": "set"
+                                          }
+                                        ],
+                                        "id": "52366b92-2729-4203-93c1-a9d1cc0af58f",
+                                        "type": "sequence"
                                       }
                                     ],
                                     "id": "bec43f06-b1d9-4f5b-973b-ea8a8ac15425",
@@ -503,12 +529,12 @@
                               }
                             },
                             "properties": {
-                              "name": "GetDirections",
+                              "name": "google/maps/GetDirections",
                               "inputParams": [
                                 {
                                   "key": "arrivalTime",
                                   "type": "entityKnowledge",
-                                  "value": "nextEvent.start.dateTime"
+                                  "value": "nextEvent.start.timeValue"
                                 },
                                 {
                                   "key": "destination",
@@ -530,7 +556,7 @@
                                 {
                                   "key": "directions",
                                   "type": "entityKnowledge",
-                                  "value": "directions"
+                                  "value": "directions.routes"
                                 }
                               ]
                             },
@@ -554,27 +580,6 @@
                             "children": [],
                             "id": "a109a567-be0c-41d7-b60b-848b5e926a15",
                             "type": "set"
-                          },
-                          {
-                            "activated": true,
-                            "metadata": {
-                              "label": "",
-                              "itemTemplate": "BTActionNode.qml"
-                            },
-                            "properties": {
-                              "name": "Wait",
-                              "inputParams": [
-                                {
-                                  "key": "time",
-                                  "type": "integer",
-                                  "value": "10"
-                                }
-                              ],
-                              "outputParams": []
-                            },
-                            "children": [],
-                            "id": "175ea3e7-e2db-4628-9faf-304146f349d9",
-                            "type": "action"
                           }
                         ],
                         "id": "b073217d-66a6-4afd-aa80-ad89205522fc",

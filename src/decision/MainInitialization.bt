@@ -65,44 +65,36 @@
               {
                 "activated": true,
                 "metadata": {
-                  "label": "Initial time",
-                  "itemTemplate": "BTSetNode.qml"
+                  "label": ""
                 },
                 "properties": {
-                  "destination": "simStartTime",
-                  "op": {
-                    "type": "globalKnowledge",
-                    "value": "time"
-                  }
-                },
-                "children": [],
-                "id": "0b811b87-64d4-44e4-b2e6-cbd6c1ac9f8c",
-                "type": "set"
-              },
-              {
-                "activated": true,
-                "metadata": {
-                  "label": "",
-                  "itemTemplate": "BTEmbeddedNode.qml",
-                  "position": {
-                    "x": -171.70208740234375,
-                    "y": 131.34091186523438,
-                    "z": 0
-                  }
-                },
-                "properties": {
-                  "behavior": {
-                    "type": "uriPath",
-                    "value": "src/decision/GetGoogleCredentials.bt"
+                  "op1": {
+                    "type": "entityKnowledge",
+                    "value": "google_userId"
                   },
-                  "inputParams": []
+                  "op2": {
+                    "type": "string",
+                    "value": ""
+                  },
+                  "op": "!="
                 },
-                "children": [],
-                "id": "2685690e-26ea-43c6-870d-69fd8b0f50a1",
-                "type": "embedded"
+                "children": [
+                  {
+                    "activated": true,
+                    "metadata": {
+                      "label": ""
+                    },
+                    "properties": {},
+                    "children": [],
+                    "id": "98148ed4-0aab-4815-aea0-fb5e8fdde73f",
+                    "type": "success"
+                  }
+                ],
+                "id": "0cc34b67-129a-41da-a8ca-f98c3bd98f1c",
+                "type": "until"
               },
               {
-                "activated": true,
+                "activated": false,
                 "metadata": {
                   "label": "",
                   "itemTemplate": "BTEmbeddedNode.qml",

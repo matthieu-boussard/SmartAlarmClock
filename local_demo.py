@@ -65,6 +65,7 @@ os.environ["CRAFT_DEMO_SAC_PORT"] = '8080'
 os.environ["CRAFT_DEMO_SAC_URL"] = 'http://localhost:8080'
 os.environ["CRAFT_DEMO_SAC_WS_URL"] = 'ws://localhost:8080'
 os.environ["CRAFT_RUNTIME_SERVER_URL"] = 'https://runtime.craft.ai'
+os.environ["CRAFT_HUB_URL"] = 'https://hub.craft.ai'
 os.environ["CRAFT_DEMO_SAC_ACTIONS_URL"] = public_url
 
 subprocess.call(["python", "-u", "src/server/main.py"])

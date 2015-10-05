@@ -50,12 +50,6 @@ localTz = 'UTC'
 working_dir = os.path.abspath(os.path.dirname(os.path.realpath(__file__)))
 
 ### Google
-SCOPES = [
-	'https://mail.google.com/',
-	'https://www.googleapis.com/auth/userinfo.email',
-	'https://www.googleapis.com/auth/calendar'
-	]
-
 auth_uri = CRAFT_HUB_URL + '/api/v1/auth/google?x-craft-ai-app-id=' + SAC_APP_ID + '&x-craft-ai-app-secret=' + SAC_APP_SECRET + '&success_uri=' + URL + '/run&failure_uri=' + URL + '?failure=true'
 
 @app.route('/', method=['GET', 'POST'])

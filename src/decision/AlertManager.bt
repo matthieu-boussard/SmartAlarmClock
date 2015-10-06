@@ -664,7 +664,7 @@
                                   "itemTemplate": "BTActionNode.qml"
                                 },
                                 "properties": {
-                                  "name": "SendEmail",
+                                  "name": "google/mail/SendEmail",
                                   "inputParams": [
                                     {
                                       "key": "message",
@@ -680,6 +680,11 @@
                                       "key": "subject",
                                       "type": "entityKnowledge",
                                       "value": "nextEvent.summary"
+                                    },
+                                    {
+                                      "key": "userId",
+                                      "type": "entityKnowledge",
+                                      "value": "google_userId"
                                     }
                                   ],
                                   "outputParams": []

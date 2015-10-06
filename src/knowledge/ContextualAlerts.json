@@ -9,9 +9,7 @@
   },
   "transportationMode": "",
   "origin": "",
-  "cred_google": {
-    "invalid": true
-  },
+  "google_userId": "",
   "directions":{
     "found": false
   },

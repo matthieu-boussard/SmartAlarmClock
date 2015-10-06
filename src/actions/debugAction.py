@@ -15,10 +15,10 @@ def registerAction(user, project, version, sim_id):
     sim_parameters['project'] = project
     sim_parameters['version'] = version
     sim_parameters['sim_id'] = sim_id
-    runtime.register_webActions(user, project, version, sim_id, 'debugAction', '/home/actions/debugAction/')
+    runtime.register_webActions(user, project, version, sim_id, 'DebugAction', '/home/actions/DebugAction/')
 
 def start():
-    entityId = int(request.json['entityId'])
+    agentId = int(request.json['agentId'])
     inputParams = request.json['input']
     request_Id = request.json['requestId']
 
@@ -33,7 +33,7 @@ def start():
 
 
 def cancel():
-    entityId = int(request.json['entityId'])
+    agentId = int(request.json['agentId'])
     request_Id = request.json['requestId']
     cancel_url = '{}/api/v1/{}/{}/{}/{}/actions/{}/cancelation'.format(runtime.CRAFT_RUNTIME_SERVER_URL, sim_parameters['user'],sim_parameters['project'],sim_parameters['version'],sim_parameters['sim_id'], request_Id)
     r = requests.post(cancel_url)

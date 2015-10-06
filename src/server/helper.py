@@ -25,7 +25,6 @@ import stateVar
 
 import httplib2
 from apiclient.discovery import build
-from oauth2client.client import OAuth2WebServerFlow, OAuth2Credentials
 
 app = Bottle()
 
@@ -39,6 +38,11 @@ CRAFT_DEMO_SAC_USER    = os.getenv('CRAFT_DEMO_SAC_USER', '')
 CRAFT_DEMO_SAC_PROJECT = os.getenv('CRAFT_DEMO_SAC_PROJECT', '')
 CRAFT_DEMO_SAC_VERSION = os.getenv('CRAFT_DEMO_SAC_VERSION','')
 
+SAC_APP_ID     = os.getenv('CRAFT_DEMO_SAC_APP_ID', '')
+SAC_APP_SECRET = os.getenv('CRAFT_DEMO_SAC_APP_SECRET', '')
+
+CRAFT_HUB_URL  = os.getenv('CRAFT_HUB_URL', '')
+
 instance_step = 0.1
 instance_id = -1
 localTz = 'UTC'
@@ -46,17 +50,7 @@ localTz = 'UTC'
 working_dir = os.path.abspath(os.path.dirname(os.path.realpath(__file__)))
 
 ### Google
-SCOPES = [
-	'https://www.googleapis.com/auth/drive',
-	'https://mail.google.com/',
-	'https://www.googleapis.com/auth/userinfo.email',
-	'https://www.googleapis.com/auth/calendar'
-	]
-
-flow = OAuth2WebServerFlow(client_id=GOOGLE_CLIENT_ID,
-                           client_secret=GOOGLE_CLIENT_SECRET,
-                           scope=' '.join(SCOPES),
-                           redirect_uri= URL + '/auth')
+auth_uri = CRAFT_HUB_URL + '/api/v1/auth/google?x-craft-ai-app-id=' + SAC_APP_ID + '&x-craft-ai-app-secret=' + SAC_APP_SECRET + '&success_uri=' + URL + '/run&failure_uri=' + URL + '?failure=true'
 
 @app.route('/', method=['GET', 'POST'])
 def google_authentification():
@@ -67,9 +61,8 @@ def google_authentification():
 		val = request.json['value']
 		if param == "tz":
 			localTz = val
-	auth_uri = flow.step1_get_authorize_url()
-	auth_uri = auth_uri + '&approval_prompt=force&state=0'
-	return template(os.path.join(working_dir, 'html/index.html'), auth = stateVar.authenticated, auth_uri = auth_uri)
+	
+	return template(os.path.join(working_dir, 'html/index.html'), auth_uri = auth_uri)
 
 ### To load css, photo files. They have to be put in the static directory
 @app.route('/static/<filename:path>')
@@ -108,7 +101,7 @@ def stop_instance():
 	    stateVar.t_instance.event.set()
 	    stateVar.t_instance.join()
 	    stateVar.t_instance = None
-	return template(os.path.join(working_dir, 'html/index.html'), auth = stateVar.authenticated, instance = stateVar.t_instance)
+	return template(os.path.join(working_dir, 'html/index.html'), auth_uri = auth_uri, instance = stateVar.t_instance)
 
 @app.route('/run', method=['GET', 'POST'])
 def run_instance():
@@ -132,8 +125,7 @@ def run_instance():
 		# Create life agent
 		with open(os.path.join(working_dir, '../knowledge/ContextualAlerts.json')) as data_file:
 			data = json.load(data_file)
-		
-		data['cred_google'] = stateVar.cred
+		data['google_userId'] = request.query['user']
 
 		stateVar.agentId = runtime.create_agent(CRAFT_DEMO_SAC_USER, CRAFT_DEMO_SAC_PROJECT, CRAFT_DEMO_SAC_VERSION, instance_id,'src/decision/ContextualAlerts.bt', data)
 	return update_data()
@@ -169,19 +161,10 @@ def update_data():
 		elif param == "speed":
 			stateVar.speedFactor = int(val)
 	return template(os.path.join(working_dir, 'html/index.html'),
-		auth = stateVar.authenticated,
+		auth_uri = auth_uri,
 		instance = stateVar.t_instance,
-		email = stateVar.cred['id_token']['email'],
 		url = URL,
 		wsUrl = WS_URL)
-
-### Google authentification
-@app.route('/auth')
-def google_authentification():
-	code = request.query.code
-	stateVar.cred = json.loads(flow.step2_exchange(code).to_json())
-	stateVar.authenticated = True
-	return template(os.path.join(working_dir, 'html/index.html'), auth = stateVar.authenticated)
 
 def register_routes_webActions(app, actionName, startCallback, cancelCallback):
 	actionRoute = '/home/actions/' + actionName

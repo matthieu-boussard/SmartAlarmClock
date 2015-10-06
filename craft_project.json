@@ -6,7 +6,7 @@
     "homeUrl": "",
     "description": "",
     "actionLibraries": {
-      "google": false
+      "google": true
     }
   }
 ]

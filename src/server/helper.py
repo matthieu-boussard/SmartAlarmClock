@@ -31,9 +31,6 @@ app = Bottle()
 URL    = os.getenv('CRAFT_DEMO_SAC_URL', '')
 WS_URL = os.getenv('CRAFT_DEMO_SAC_WS_URL', '')
 
-GOOGLE_CLIENT_ID     = os.getenv('CRAFT_DEMO_SAC_GOOGLE_CLIENT_ID', '')
-GOOGLE_CLIENT_SECRET = os.getenv('CRAFT_DEMO_SAC_GOOGLE_CLIENT_SECRET', '')
-
 CRAFT_DEMO_SAC_USER    = os.getenv('CRAFT_DEMO_SAC_USER', '')
 CRAFT_DEMO_SAC_PROJECT = os.getenv('CRAFT_DEMO_SAC_PROJECT', '')
 CRAFT_DEMO_SAC_VERSION = os.getenv('CRAFT_DEMO_SAC_VERSION','')
@@ -61,7 +58,7 @@ def google_authentification():
 		val = request.json['value']
 		if param == "tz":
 			localTz = val
-	
+
 	return template(os.path.join(working_dir, 'html/index.html'), auth_uri = auth_uri)
 
 ### To load css, photo files. They have to be put in the static directory
@@ -107,7 +104,6 @@ def stop_instance():
 def run_instance():
 	if stateVar.t_instance is None:
 		stateVar.currentTime = time.time()
-		# Create life instance    
 		global instance_id
 		instance_id = runtime.create_instance(CRAFT_DEMO_SAC_USER, CRAFT_DEMO_SAC_PROJECT, CRAFT_DEMO_SAC_VERSION)
 
@@ -121,8 +117,7 @@ def run_instance():
 		# Start update instance in a thread
 		stateVar.t_instance = UpdateLifeThreadClass()
 		stateVar.t_instance.start()
-		
-		# Create life agent
+
 		with open(os.path.join(working_dir, '../knowledge/ContextualAlerts.json')) as data_file:
 			data = json.load(data_file)
 		data['google_userId'] = request.query['user']
@@ -181,7 +176,7 @@ def get_and_register_webActions():
 		register_routes_webActions(app, name, module.start, module.cancel)
 		print '- Registering web actions: ' + name
 
-### LIFE update in a thread
+### decision update in a thread
 class UpdateLifeThreadClass(gevent.Greenlet):
 	def __init__(self):
 		gevent.Greenlet.__init__(self)

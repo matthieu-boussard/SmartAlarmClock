@@ -3,8 +3,8 @@
     "version": "0.0.1"
   },
   {
-    "homeUrl": "",
-    "description": "",
+    "homeUrl": "http://doc.craft.ai/example_projects/SmartAlarmClock/",
+    "description": "**SAC** is a small demo application built with [**craft ai**](http://craft.ai).\nIt demonstrates an application that will take care of managing your time based on your meetings on your google calendar.\nIt will alert you when you should leave to your next meeting and will give you instruction on time to not miss it, based on realtime traffic informations.",
     "actionLibraries": {
       "google": true
     }

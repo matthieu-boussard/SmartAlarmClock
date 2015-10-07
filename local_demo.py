@@ -13,8 +13,6 @@ def userInput(config):
 	res['user_name'] = raw_input("your GitHub username (default = " + defaultValue(config, 'user_name') + "): ")
 	res['project_name'] = raw_input("name of your SAC project on GitHub (default = " + defaultValue(config, 'project_name') + "): ")
 	res['project_branch'] = raw_input("current working branch of your SAC project on GitHub (default = " + defaultValue(config, 'project_branch') + "): ")
-	res['google_client_id'] = raw_input("generated Google client id (default = " + defaultValue(config, 'google_client_id') + "): ")
-	res['google_client_secret'] = raw_input("generated Google client secret (default = " + defaultValue(config, 'google_client_secret') + "): ")
 	res['sac_app_id'] = raw_input("generated SAC app ID (default = " + defaultValue(config, 'sac_app_id') + "): ")
 	res['sac_app_secret'] = raw_input("generated SAC app secret (default = " + defaultValue(config, 'sac_app_secret') + "): ")
 	for k, v in res.items():
@@ -34,7 +32,7 @@ if len(invalid_properties) > 0:
 	print "invalid configuration: properties", invalid_properties, "must be set"
 	config = userInput(config)
 
-if 'user_name' and 'project_name' and 'project_branch' and 'google_client_id' and 'google_client_secret' and 'sac_app_id' and 'sac_app_secret' in config:
+if 'user_name' and 'project_name' and 'project_branch' and 'sac_app_id' and 'sac_app_secret' in config:
 	reply = str(raw_input('config file complete. do you wish to reset it? (y/n): ')).lower().strip()
 	if reply[0] == 'y':
 		config = userInput(config)
@@ -57,14 +55,12 @@ public_url = json.loads(r.text)['tunnels'][0]['public_url']
 os.environ["CRAFT_DEMO_SAC_USER"] = config['user_name']
 os.environ["CRAFT_DEMO_SAC_PROJECT"] = config['project_name']
 os.environ["CRAFT_DEMO_SAC_VERSION"] = config['project_branch']
-os.environ["CRAFT_DEMO_SAC_GOOGLE_CLIENT_ID"] = config['google_client_id']
-os.environ["CRAFT_DEMO_SAC_GOOGLE_CLIENT_SECRET"] = config['google_client_secret']
 os.environ["CRAFT_DEMO_SAC_APP_ID"] = config['sac_app_id']
 os.environ["CRAFT_DEMO_SAC_APP_SECRET"] = config['sac_app_secret']
 os.environ["CRAFT_DEMO_SAC_PORT"] = '8080'
 os.environ["CRAFT_DEMO_SAC_URL"] = 'http://localhost:8080'
 os.environ["CRAFT_DEMO_SAC_WS_URL"] = 'ws://localhost:8080'
-os.environ["CRAFT_RUNTIME_SERVER_URL"] = 'https://api.craft.ai'
+os.environ["CRAFT_RUNTIME_SERVER_URL"] = 'https://runtime.craft.ai'
 os.environ["CRAFT_HUB_URL"] = 'https://hub.craft.ai'
 os.environ["CRAFT_DEMO_SAC_ACTIONS_URL"] = public_url
 

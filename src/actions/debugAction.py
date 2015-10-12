@@ -25,7 +25,7 @@ def start():
     inputParams = actions.applyDefaultValues(inputParams, defaultInputParams)
 
     print 'Debuging:',inputParams['message'], ':', inputParams['value']
-    success_url = '{}/api/v1/{}/{}/{}/{}/actions/{}/success'.format(runtime.CRAFT_RUNTIME_SERVER_URL, sim_parameters['user'],sim_parameters['project'],sim_parameters['version'],sim_parameters['sim_id'], request_Id)
+    success_url = '{}/v1/{}/{}/{}/{}/actions/{}/success'.format(runtime.CRAFT_RUNTIME_SERVER_URL, sim_parameters['user'],sim_parameters['project'],sim_parameters['version'],sim_parameters['sim_id'], request_Id)
     json_headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
 
     r = requests.post(success_url)
@@ -35,6 +35,6 @@ def start():
 def cancel():
     agentId = int(request.json['agentId'])
     request_Id = request.json['requestId']
-    cancel_url = '{}/api/v1/{}/{}/{}/{}/actions/{}/cancelation'.format(runtime.CRAFT_RUNTIME_SERVER_URL, sim_parameters['user'],sim_parameters['project'],sim_parameters['version'],sim_parameters['sim_id'], request_Id)
+    cancel_url = '{}/v1/{}/{}/{}/{}/actions/{}/cancelation'.format(runtime.CRAFT_RUNTIME_SERVER_URL, sim_parameters['user'],sim_parameters['project'],sim_parameters['version'],sim_parameters['sim_id'], request_Id)
     r = requests.post(cancel_url)
     return 

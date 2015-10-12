@@ -29,13 +29,13 @@ def start():
 
 	request_Id = request.json['requestId']
 	output_json = json.dumps({"result": (inputParams['term1'] + inputParams['term2'])})
-	success_url = '{}/api/v1/{}/{}/{}/{}/actions/{}/success'.format(runtime.CRAFT_RUNTIME_SERVER_URL, sim_parameters['user'],sim_parameters['project'],sim_parameters['version'],sim_parameters['sim_id'], request_Id)
+	success_url = '{}/v1/{}/{}/{}/{}/actions/{}/success'.format(runtime.CRAFT_RUNTIME_SERVER_URL, sim_parameters['user'],sim_parameters['project'],sim_parameters['version'],sim_parameters['sim_id'], request_Id)
 	json_headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
 	r = requests.post(success_url, data=output_json, headers = json_headers)
 	return 
 
 def cancel():
 	request_Id = request.json['requestId']
-	cancel_url = '{}/api/v1/{}/{}/{}/{}/actions/{}/cancelation'.format(runtime.CRAFT_RUNTIME_SERVER_URL, sim_parameters['user'],sim_parameters['project'],sim_parameters['version'],sim_parameters['sim_id'], request_Id)
+	cancel_url = '{}/v1/{}/{}/{}/{}/actions/{}/cancelation'.format(runtime.CRAFT_RUNTIME_SERVER_URL, sim_parameters['user'],sim_parameters['project'],sim_parameters['version'],sim_parameters['sim_id'], request_Id)
 	r = requests.post(cancel_url)
 	return 

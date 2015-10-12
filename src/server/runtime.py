@@ -13,7 +13,7 @@ status = {'created': 0, 'failed': 1, 'running': 2, 'succeeded': 3, 'canceled': 4
 
 URL = os.getenv('CRAFT_DEMO_SAC_URL', '')
 CRAFT_RUNTIME_SERVER_URL = os.getenv('CRAFT_RUNTIME_SERVER_URL', '')
-CRAFT_RUNTIME_SERVER_API_BASE_ROUTE = os.getenv('CRAFT_RUNTIME_SERVER_API_BASE_ROUTE', '/api/v1')
+CRAFT_RUNTIME_SERVER_API_BASE_ROUTE = os.getenv('CRAFT_RUNTIME_SERVER_API_BASE_ROUTE', '/v1')
 HOSTIP = [(s.connect(('8.8.8.8', 80)), s.getsockname()[0], s.close()) for s in [socket.socket(socket.AF_INET, socket.SOCK_DGRAM)]][0][1]
 CRAFT_DEMO_SAC_ACTIONS_URL = os.getenv('CRAFT_DEMO_SAC_ACTIONS_URL', 'http://' + HOSTIP + ':' + os.getenv('CRAFT_DEMO_SAC_PORT', '8082'))
 SAC_APP_SECRET = os.getenv('CRAFT_DEMO_SAC_APP_SECRET', '')

@@ -94,7 +94,7 @@
                 "type": "until"
               },
               {
-                "activated": true,
+                "activated": false,
                 "metadata": {
                   "label": "",
                   "itemTemplate": "BTEmbeddedNode.qml",

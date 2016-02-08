@@ -66,6 +66,26 @@
                           {
                             "activated": true,
                             "metadata": {
+                              "label": ""
+                            },
+                            "properties": {
+                              "name": "DebugAction",
+                              "inputParams": [
+                                {
+                                  "key": "message",
+                                  "type": "string",
+                                  "value": "*****************0001"
+                                }
+                              ],
+                              "outputParams": []
+                            },
+                            "children": [],
+                            "id": "c1b7b2c9-f955-45b6-9909-8d7cf4c78193",
+                            "type": "action"
+                          },
+                          {
+                            "activated": true,
+                            "metadata": {
                               "label": "",
                               "itemTemplate": "BTActionNode.qml"
                             },
@@ -103,6 +123,26 @@
                             },
                             "children": [],
                             "id": "1b8173ee-3d41-41f7-9469-721a0a2bfe99",
+                            "type": "action"
+                          },
+                          {
+                            "activated": true,
+                            "metadata": {
+                              "label": ""
+                            },
+                            "properties": {
+                              "name": "DebugAction",
+                              "inputParams": [
+                                {
+                                  "key": "message",
+                                  "type": "string",
+                                  "value": "**********0002"
+                                }
+                              ],
+                              "outputParams": []
+                            },
+                            "children": [],
+                            "id": "2cc0b43e-2d26-442a-9057-19463783b410",
                             "type": "action"
                           },
                           {
@@ -517,6 +557,20 @@
                         },
                         "properties": {},
                         "children": [
+                          {
+                            "activated": true,
+                            "metadata": {
+                              "label": ""
+                            },
+                            "properties": {
+                              "name": "",
+                              "inputParams": [],
+                              "outputParams": []
+                            },
+                            "children": [],
+                            "id": "df88031a-e0ab-448f-8019-2832fdb9c605",
+                            "type": "action"
+                          },
                           {
                             "activated": true,
                             "metadata": {
